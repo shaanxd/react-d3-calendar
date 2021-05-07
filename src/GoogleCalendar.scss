@@ -1,0 +1,26 @@
+.chart-axis,
+.chart-grid {
+  font-family: 'europa', sans-serif;
+  .domain {
+    stroke: #99999980;
+  }
+  .tick {
+    text {
+      fill: #666666;
+    }
+    line {
+      stroke: #eeeeee;
+      stroke-width: 1px;
+    }
+  }
+}
+
+.chart-axis {
+  &.x-axis {
+    @media (max-width: 768px) {
+      .tick:nth-child(odd) {
+        display: none;
+      }
+    }
+  }
+}
