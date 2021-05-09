@@ -197,7 +197,12 @@ function drawChart(
       .attr('x', (d) => getXBarPosition(d.x))
       .attr('y', (d) => getYScalePosition(d.values.start))
       .attr('width', getBarWidth())
-      .text((d) => d.title)
+      .text(
+        (d) =>
+          `(${d.title}) ${moment(d.values.start).format('h:mm A')} - ${moment(
+            d.values.end
+          ).format('h:mm A')}`
+      )
       .style('fill', '#ffffff')
       .style('font-size', ({ values: { start, end } }) =>
         getDifferenceInTimeSpans(start, end) > 30 ? '12px' : '11px'

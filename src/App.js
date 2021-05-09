@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
 
@@ -9,6 +9,29 @@ const Container = styled.div`
   height: 100vh;
   padding: 2rem;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+`;
+
+const CalendarContainer = styled.div`
+  flex: 1;
+`;
+
+const HeaderContainer = styled.div`
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const PrimaryButton = styled.button`
+  padding: 1rem;
+  border-radius: 5px;
+  border: none;
+  color: #ffffff;
+  background-color: #0099f3;
+  font-size: 1rem;
 `;
 
 const MINUTES = [0, 15, 30, 45];
@@ -61,13 +84,23 @@ function getMockData(today) {
   return data;
 }
 
-const data = getMockData(new Date());
-
 function App() {
+  const [current, setCurrentDate] = useState(new Date());
+  const [data, setData] = useState(getMockData(current));
+
+  function generateNewData() {
+    setData(getMockData(current));
+  }
+
   return (
     <div className='App'>
       <Container>
-        <GoogleCalendar animate data={data} />
+        <HeaderContainer>
+          <PrimaryButton onClick={generateNewData}>Generate!</PrimaryButton>
+        </HeaderContainer>
+        <CalendarContainer>
+          <GoogleCalendar animate data={data} />
+        </CalendarContainer>
       </Container>
     </div>
   );
