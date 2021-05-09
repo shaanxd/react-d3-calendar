@@ -24,7 +24,9 @@ function drawChart(
   xBarWidthPercentage,
   currentMarkerHeight,
   currentMarkerCircleRadius,
-  barBorderRadius
+  barBorderRadius,
+  xAxisTickSize,
+  yAxisTickSize
 ) {
   const svg = d3.select(element);
   svg.selectAll('*').remove();
@@ -45,18 +47,21 @@ function drawChart(
   const xScale = d3
     .scaleTime()
     .domain([moment(xMin).subtract(1, 'day').toDate(), xMax])
-    .range([0, width - (xLeftPadding + xRightPadding)]);
+    .range([0, width - (xLeftPadding + yAxisTickSize + xRightPadding)]);
 
   function drawYAxis() {
     chart
       .append('g')
       .attr('class', 'chart-grid')
-      .attr('transform', `translate(${xLeftPadding}, ${yTopPadding})`)
+      .attr(
+        'transform',
+        `translate(${xLeftPadding + yAxisTickSize}, ${yTopPadding})`
+      )
       .call(
         d3
           .axisLeft(yScale)
           .ticks(24)
-          .tickSize(xLeftPadding + xRightPadding - width)
+          .tickSize(xLeftPadding + yAxisTickSize + xRightPadding - width)
           .tickSizeOuter(0)
           .tickFormat('')
       )
@@ -67,18 +72,21 @@ function drawChart(
     chart
       .append('g')
       .attr('class', 'chart-axis y-axis')
-      .attr('transform', `translate(${xLeftPadding}, ${yTopPadding})`)
+      .attr(
+        'transform',
+        `translate(${xLeftPadding + yAxisTickSize}, ${yTopPadding})`
+      )
       .call(
         d3
           .axisLeft(yScale)
           .ticks(24)
           .tickFormat(d3.timeFormat('%H:%M'))
           .tickPadding(10)
-          .tickSize(0)
+          .tickSize(yAxisTickSize)
           .tickSizeOuter(0)
       )
       .selectAll('text')
-      .filter((_, i, list) => i === 0 || i === list.length - 1)
+      .filter((_, i, list) => i === list.length - 1)
       .style('visibility', 'hidden');
   }
 
@@ -86,7 +94,10 @@ function drawChart(
     chart
       .append('g')
       .attr('class', 'chart-grid')
-      .attr('transform', `translate(${xLeftPadding}, ${yTopPadding})`)
+      .attr(
+        'transform',
+        `translate(${xLeftPadding + yAxisTickSize}, ${yTopPadding})`
+      )
       .call(
         d3
           .axisTop(xScale)
@@ -102,7 +113,10 @@ function drawChart(
     const xAxisContainer = chart
       .append('g')
       .attr('class', 'chart-axis x-axis')
-      .attr('transform', `translate(${xLeftPadding}, ${yTopPadding})`);
+      .attr(
+        'transform',
+        `translate(${xLeftPadding + yAxisTickSize}, ${yTopPadding})`
+      );
 
     xAxisContainer
       .call(
@@ -111,12 +125,15 @@ function drawChart(
           .ticks(data.length)
           .tickValues(data.map((d) => d.x))
           .tickFormat(d3.timeFormat('%d'))
-          .tickSize(0)
+          .tickSize(xAxisTickSize)
           .tickPadding(15)
       )
       .selectAll('text')
       .style('font-size', '26px')
-      .attr('transform', `translate(${-width / data.length / 2}, 0)`);
+      .attr(
+        'transform',
+        `translate(${-width / data.length / 2}, ${xAxisTickSize})`
+      );
 
     xAxisContainer
       .selectChildren('.tick')
@@ -137,7 +154,7 @@ function drawChart(
   function getXBarPosition(xValue) {
     return (
       getXScalePosition(xValue) +
-      ((width - (xLeftPadding + xRightPadding)) / data.length) *
+      ((width - (xLeftPadding + yAxisTickSize + xRightPadding)) / data.length) *
         (1 - xBarWidthPercentage) *
         0.25
     );
@@ -148,7 +165,9 @@ function drawChart(
   }
 
   function getXGroupWidth() {
-    return (width - (xLeftPadding + xRightPadding)) / data.length;
+    return (
+      (width - (xLeftPadding + yAxisTickSize + xRightPadding)) / data.length
+    );
   }
 
   function getBarWidth() {
@@ -177,7 +196,10 @@ function drawChart(
 
     const parentNode = chart
       .append('g')
-      .attr('transform', `translate(${xLeftPadding}, ${yTopPadding})`);
+      .attr(
+        'transform',
+        `translate(${xLeftPadding + yAxisTickSize}, ${yTopPadding})`
+      );
 
     parentNode
       .selectAll('rect')
@@ -237,7 +259,10 @@ function drawChart(
     }
     const parentNode = chart
       .append('g')
-      .attr('transform', `translate(${xLeftPadding}, ${yTopPadding})`);
+      .attr(
+        'transform',
+        `translate(${xLeftPadding + yAxisTickSize}, ${yTopPadding})`
+      );
 
     const [{ x: markerXPosition }] = filteredData;
 
@@ -262,8 +287,8 @@ function drawChart(
 
   drawYAxis();
   drawXAxis();
-  drawBars();
   drawCurrentMarker();
+  drawBars();
 }
 
 function useWindowWidthResize() {
@@ -301,6 +326,8 @@ function GoogleCalendar({
   currentMarkerHeight,
   currentMarkerCircleRadius,
   barBorderRadius,
+  xAxisTickSize,
+  yAxisTickSize,
 }) {
   const svgRef = useRef(null);
   const width = useWindowWidthResize();
@@ -317,7 +344,9 @@ function GoogleCalendar({
       xBarWidthPercentage,
       currentMarkerHeight,
       currentMarkerCircleRadius,
-      barBorderRadius
+      barBorderRadius,
+      xAxisTickSize,
+      yAxisTickSize
     );
   }, [
     data,
@@ -330,6 +359,8 @@ function GoogleCalendar({
     currentMarkerHeight,
     currentMarkerCircleRadius,
     barBorderRadius,
+    xAxisTickSize,
+    yAxisTickSize,
     width,
   ]);
 
@@ -357,6 +388,8 @@ GoogleCalendar.propTypes = {
   currentMarkerHeight: PropTypes.number,
   currentMarkerCircleRadius: PropTypes.number,
   barBorderRadius: PropTypes.number,
+  xAxisTickSize: PropTypes.number,
+  yAxisTickSize: PropTypes.number,
 };
 
 GoogleCalendar.defaultProps = {
@@ -369,6 +402,8 @@ GoogleCalendar.defaultProps = {
   currentMarkerHeight: 2.5,
   currentMarkerCircleRadius: 6,
   barBorderRadius: 5,
+  xAxisTickSize: 10,
+  yAxisTickSize: 10,
 };
 
 export default GoogleCalendar;
