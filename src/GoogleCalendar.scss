@@ -1,6 +1,6 @@
 .chart-axis,
 .chart-grid {
-  font-family: 'europa', sans-serif;
+  font-family: "europa", sans-serif;
   .domain {
     stroke: #99999980;
   }
@@ -9,8 +9,8 @@
       fill: #666666;
     }
     line {
-      stroke: #eeeeee;
-      stroke-width: 1px;
+      stroke: #d2d2d2;
+      stroke-width: 0.75px;
     }
   }
 }
